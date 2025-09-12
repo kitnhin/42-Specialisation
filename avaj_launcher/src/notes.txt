@@ -1,0 +1,19 @@
+Attributes:
+hashtag (#) = protected attribute
+minus (-) = private attribute
+plus (+) = public attribute
+tilde (~) = package only access (default by Java lol)
+Conclusion: - = own class access only, ~ = package access, + = everyone can access
+
+Arrows:
+Diamond solid tip: Composition - has a private attribute of the "part" class, that it creates
+Solid line, hollow triangle tip: Inheritance 
+Dotted line, hollow triangle tip: Interface inheritence (normally according to geeks, but in this case looks like they want abstract class ?)
+
+///additional info
+Comparison between diamond solid and diamond hollow tip (Composition vs Aggregation):
+- Both have a private attribute of the part class
+- However composition is the main class owns fully the part class (meaning it calls "new" for the class in the constructor)
+- Aggregation accepts the part class from outside
+- So basically when the main class dies, for composition the part class dies also, but for aggregation it doesnt and can continue to exist
+** BUT, somehow the uml given shows a solid dia while inheriting the Coords instance from outside so.... i oso dk

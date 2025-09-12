@@ -18,6 +18,7 @@ all:
 clean:
 	@rm -rf ${BUILD_DIR}
 	@rm -rf sources.txt
+	@rm -rf simulation.txt
 
 re: clean all
 
