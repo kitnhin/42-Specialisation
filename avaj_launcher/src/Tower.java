@@ -5,12 +5,11 @@ import java.util.List;
 
 public class Tower
 {
-	private List <Flyable> observers = new ArrayList<>();
+	private List <Flyable> observers = new ArrayList<Flyable>();
 
 	public void register(Flyable p_flyable)
 	{
 		observers.add(p_flyable);
-		System.out.println("Registered flyable!!");
 	}
 
 	public void unregister(Flyable p_flyable)
@@ -20,7 +19,8 @@ public class Tower
 
 	protected void conditionChanged()
 	{
-		//implement ltr
+		for(int i = 0; i < observers.size(); i++)
+			observers.get(i).updateConditions();
 	}
 }
 

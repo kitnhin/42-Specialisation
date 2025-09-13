@@ -4,7 +4,7 @@ import src.Exceptions.InvalidAircraftException;
 
 public class AircraftFactory
 {
-	private static AircraftFactory instance= new AircraftFactory();
+	private static AircraftFactory instance = new AircraftFactory();
 	private static long id = 1;
 	private AircraftFactory() {};
 

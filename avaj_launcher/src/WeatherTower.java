@@ -9,6 +9,6 @@ public class WeatherTower extends Tower
 
 	public void changeWeather()
 	{
-		
+		this.conditionChanged(); //need to use the base class Tower function cuz the array is private there
 	}
 }
