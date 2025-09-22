@@ -1,9 +1,9 @@
 DATAFILE = data.csv
 
 train:
-	@python train.py
+	@python3 train.py
 
 predict:
-	@python predict.py
+	@python3 predict.py
 
 all: train predict

@@ -108,7 +108,6 @@ def plot_milage_vs_price():
 		x_line.append(milage)
 		y_line.append(theta0 + (theta1 * milage))
     
-	plot.figure(1)
 	plot.plot(x_line, y_line, color="red", label='Regression line')
 	plot.xlabel('Mileage (km)')
 	plot.ylabel('Price ($)')
