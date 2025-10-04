@@ -7,9 +7,7 @@ import matplotlib.pyplot as plot
 file_contents = ""
 fields = []
 field_names = []
-number_of_bars = 30
-
-# flag = 1
+number_of_bars = 10
 
 def is_numeric(str):
 	try:
@@ -52,7 +50,6 @@ def extract_fields():
 			for j in range(number_of_fields):
 				fields[j].append(line_parts[j])
 
-
 def readfile(filename):
 	global file_contents
 	file = open(filename)
@@ -70,45 +67,79 @@ def calc_values_and_print():
 	#init the subplot
 	num_of_columns = 5
 	num_of_rows = math.ceil(len(numeric_fields_index) / num_of_columns)
-	fig, axes = plot.subplots(num_of_rows, num_of_columns, figsize=(15, len(numeric_fields_index)*0.7)) #figsize is the total figure size so idh to always zoom
+	fig, axes = plot.subplots(num_of_rows, num_of_columns, figsize=(15, len(numeric_fields_index)*0.6)) #figsize is the total figure size so idh to always zoom
 	axes = axes.flatten() #axes is a 2d array of plot objects, flatten makes it 1D so i can access it easier
 	plot.subplots_adjust(hspace=0.5, wspace=0.6) #set spacing between plots
 
+	best_score = 999999999999
+	best_course = ""
+	best_course_index = i
 	for i in range(len(numeric_fields_index)):
-		plot_histogram(fields[numeric_fields_index[i]], field_names[numeric_fields_index[i]], axes[i])
-	
+		score = plot_histogram(fields[numeric_fields_index[i]], field_names[numeric_fields_index[i]], axes[i])
+		if score < best_score:
+			best_course = field_names[numeric_fields_index[i]]
+			best_score = score
+			best_course_index = numeric_fields_index[i]
 	plot.show()
+
+	fig2, ax2 = plot.subplots(1, 1, figsize=(10, 6))
+	plot_histogram(fields[best_course_index], best_course, ax2)
+	ax2.set_title("Best course: " + best_course)
+	ax2.legend()
+	plot.show()
+
 
 def plot_histogram(field, fieldname, axes):
 
-	numeric_values = convert_field_to_int(field)
+	#find house index
+	house_index = -1
+	for i in range(len(field_names)):
+		if field_names[i].lower() == "hogwarts house":
+			house_index = i
+			break
 
-	# find the range of each bar
-	max_value = calc_max(field)
-	min_value = calc_min(field)
-	bar_width = (max_value - min_value) / number_of_bars
+	# Extract scores
+	house_names = ["Gryffindor", "Slytherin", "Ravenclaw", "Hufflepuff"]
+	colors = ['red', 'green', 'blue', 'yellow']
+	house_scores = [[] for _ in range(4)]
 
-	#find the counts of each range
-	counts = [0] * number_of_bars
-	for i in range(len(numeric_values)):
-		bar_index = int((numeric_values[i] - min_value) / bar_width)
-		
-		if bar_index >= number_of_bars: # only happens at max_value
-			bar_index = bar_index - 1
-			
-		counts[bar_index] += 1
-	
-	# meng plot kan
-	for i in range(number_of_bars):
-		left_edge = bar_width * i + min_value
-		axes.bar(left_edge, counts[i], width=bar_width, align="edge")
-	
+	for i in range(len(field)):
+		if field[i].strip() == "":
+			continue
+		house = fields[house_index][i].strip()
+		score = float(field[i].strip())
+		for h in range(4):
+			if house == house_names[h]:
+				house_scores[h].append(score)
+				break
+
+	#loop for each house
+	for h in range(4):
+		axes.hist(house_scores[h], alpha=0.5, color=colors[h], label=house_names[h])
+
 	axes.set_xlabel("Scores")
 	axes.set_ylabel("Frequency")
 	axes.set_title(fieldname)
 
+	# calculate the std diff so we know which course have the closest score
+	house_stds = []
+	for h in range(4):
+		std = calc_std(house_scores[h])
+		house_stds.append(std)
+
+	average_std = sum(house_stds) / 4
+
+	total_difference = 0
+	for std in house_stds:
+		difference = abs(std - average_std)
+		total_difference += difference
+
+	score = total_difference / 4
+	return score
+
+#calc functions
 def calc_min(values):
-	min_value = 2**63   # 9223372036854775808 (64bit int min cuz python has no min wts)
+	min_value = 2**63
 
 	for i in range(len(values)):
 		if values[i].strip() == "":
@@ -127,12 +158,27 @@ def calc_max(values):
 	
 	return max_value
 
-def convert_field_to_int(field):
-	numeric_values = []
-	for value in field:
-		if value.strip() != "":
-			numeric_values.append(float(value.strip()))
-	return numeric_values
+def calc_count(values):
+	count = 0
+	for i in range(len(values)):
+		count += 1
+	return count
+
+def calc_mean(values):
+	sum = 0
+	for i in range(len(values)):
+		sum += values[i]
+	mean = sum / calc_count(values)
+	return mean
+
+def calc_std(values):
+	mean = calc_mean(values)
+	std = 0
+	for i in range(len(values)):
+		std += (values[i] - mean) ** 2
+	
+	std = math.sqrt(std / calc_count(values))
+	return std
 
 
 if __name__ == "__main__":
