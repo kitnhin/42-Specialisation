@@ -5,9 +5,8 @@ import matplotlib.pyplot as plot
 
 #variables
 file_contents = ""
-fields = []
+field_values = []
 field_names = []
-number_of_bars = 10
 
 def is_numeric(str):
 	try:
@@ -32,7 +31,7 @@ def check_array_is_numeric(arr):
 	return found_value # if all are empty strings then auto will return false
 
 def extract_fields():
-	global fields, number_of_fields, field_names
+	global field_values, number_of_fields, field_names
 
 	#extract field names
 	lines = file_contents.split('\n')
@@ -41,14 +40,14 @@ def extract_fields():
 
 	#init fields
 	for i in range(number_of_fields):
-		fields.append([])
+		field_values.append([])
 
 	# extract the rest of the fields
 	for i in range(1, len(lines)):
 		line_parts = lines[i].split(",")
 		if len(line_parts) == number_of_fields:
 			for j in range(number_of_fields):
-				fields[j].append(line_parts[j])
+				field_values[j].append(line_parts[j])
 
 def readfile(filename):
 	global file_contents
@@ -56,12 +55,12 @@ def readfile(filename):
 	file_contents = file.read()
 	file.close()
 
-def calc_values_and_print():
-	
+def calc_and_display_histogram():
+
 	#find the numberic fields
 	numeric_fields_index = []
-	for i in range(1, len(fields)):
-		if(check_array_is_numeric(fields[i]) == True):
+	for i in range(1, len(field_values)):
+		if(check_array_is_numeric(field_values[i]) == True):
 			numeric_fields_index.append(i)
 	
 	#init the subplot
@@ -73,9 +72,9 @@ def calc_values_and_print():
 
 	best_score = 999999999999
 	best_course = ""
-	best_course_index = i
+	best_course_index = 0
 	for i in range(len(numeric_fields_index)):
-		score = plot_histogram(fields[numeric_fields_index[i]], field_names[numeric_fields_index[i]], axes[i])
+		score = plot_histogram(field_values[numeric_fields_index[i]], field_names[numeric_fields_index[i]], axes[i])
 		if score < best_score:
 			best_course = field_names[numeric_fields_index[i]]
 			best_score = score
@@ -83,7 +82,7 @@ def calc_values_and_print():
 	plot.show()
 
 	fig2, ax2 = plot.subplots(1, 1, figsize=(10, 6))
-	plot_histogram(fields[best_course_index], best_course, ax2)
+	plot_histogram(field_values[best_course_index], best_course, ax2)
 	ax2.set_title("Best course: " + best_course)
 	ax2.legend()
 	plot.show()
@@ -101,19 +100,21 @@ def plot_histogram(field, fieldname, axes):
 	# Extract scores
 	house_names = ["Gryffindor", "Slytherin", "Ravenclaw", "Hufflepuff"]
 	colors = ['red', 'green', 'blue', 'yellow']
-	house_scores = [[] for _ in range(4)]
+	house_scores = []
+	for i in range(4):
+		house_scores.append([])
 
 	for i in range(len(field)):
 		if field[i].strip() == "":
 			continue
-		house = fields[house_index][i].strip()
+		house = field_values[house_index][i].strip()
 		score = float(field[i].strip())
 		for h in range(4):
 			if house == house_names[h]:
 				house_scores[h].append(score)
 				break
 
-	#loop for each house
+	#plot for each house
 	for h in range(4):
 		axes.hist(house_scores[h], alpha=0.5, color=colors[h], label=house_names[h])
 
@@ -188,7 +189,7 @@ if __name__ == "__main__":
 		
 		readfile(sys.argv[1])
 		extract_fields()
-		calc_values_and_print()
+		calc_and_display_histogram()
 
 	except Exception as e:
 		print("Error: ", e)

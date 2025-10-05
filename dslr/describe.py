@@ -4,12 +4,8 @@ import numpy as np
 
 #variables
 file_contents = ""
-fields = []
+field_values = []
 field_names = []
-number_of_fields = 0
-print_field_size = 30
-pad_number = 10
-# flag = 1
 
 def is_numeric(str):
 	try:
@@ -19,10 +15,6 @@ def is_numeric(str):
 		return False
 	
 def check_array_is_numeric(arr):
-	# global flag
-	# flag += 1
-	# if(flag == 7):
-	# 	print(arr)
 	found_value = False
 	for i in range(len(arr)):
 
@@ -32,13 +24,12 @@ def check_array_is_numeric(arr):
 		found_value = True
 
 		if is_numeric(arr[i]) == False:
-			# print(arr[i], "is not numeric")
 			return False
 	
 	return found_value # if all are empty strings then auto will return false
 
 def extract_fields():
-	global fields, number_of_fields, field_names
+	global field_values, field_names
 
 	#extract field names
 	lines = file_contents.split('\n')
@@ -47,15 +38,14 @@ def extract_fields():
 
 	#init fields
 	for i in range(number_of_fields):
-		fields.append([])
+		field_values.append([])
 
 	# extract the rest of the fields
 	for i in range(1, len(lines)):
 		line_parts = lines[i].split(",")
 		if len(line_parts) == number_of_fields:
 			for j in range(number_of_fields):
-				fields[j].append(line_parts[j])
-
+				field_values[j].append(line_parts[j])
 
 def readfile(filename):
 	global file_contents
@@ -64,6 +54,10 @@ def readfile(filename):
 	file.close()
 
 def calc_values_and_print():
+
+	#printing settings
+	print_field_size = 30
+	pad_number = 10
 
 	#print header
 	headings = ["field", "count", "mean", "std", "min", "25%", "50%", "75%", "max"]
@@ -75,32 +69,32 @@ def calc_values_and_print():
 	print(f"\n{(print_field_size + ((pad_number + 1) * len(headings))) * "-"}")
 
 	
-	for i in range(1, len(fields)):
+	for i in range(1, len(field_values)):
 		#print field name
 		print(f"|{field_names[i]:<{print_field_size}}|", end="") # :< means left alighnment
 
 		#print number
-		if(check_array_is_numeric(fields[i]) == True):
+		if(check_array_is_numeric(field_values[i]) == True):
 
 			#append calculations here and it shall be auto added
 			stats_calculated = []
-			stats_calculated.append(calc_count(fields[i]))
-			stats_calculated.append(calc_mean(fields[i]))
-			stats_calculated.append(calc_std(fields[i]))
-			stats_calculated.append(calc_min(fields[i]))
-			stats_calculated.append(calc_percentile(fields[i], 25))
-			stats_calculated.append(calc_percentile(fields[i], 50))
-			stats_calculated.append(calc_percentile(fields[i], 75))
-			stats_calculated.append(calc_max(fields[i]))
+			stats_calculated.append(calc_count(field_values[i]))
+			stats_calculated.append(calc_mean(field_values[i]))
+			stats_calculated.append(calc_std(field_values[i]))
+			stats_calculated.append(calc_min(field_values[i]))
+			stats_calculated.append(calc_percentile(field_values[i], 25))
+			stats_calculated.append(calc_percentile(field_values[i], 50))
+			stats_calculated.append(calc_percentile(field_values[i], 75))
+			stats_calculated.append(calc_max(field_values[i]))
 
 			for i in range(len(stats_calculated)):
-				print(f"|{truncate_number(stats_calculated[i]):^{pad_number}}|", end="")
+				print(f"|{truncate_number(stats_calculated[i], pad_number):^{pad_number}}|", end="")
 			print("")
 
 		else:
 			print("| No values for this field")
 
-def truncate_number(number):
+def truncate_number(number, pad_number):
 	rounded = round(number, 2) # limit 2 decimal places
 	number_str = str(rounded)
 	if len(number_str) > pad_number:
