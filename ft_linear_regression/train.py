@@ -29,7 +29,7 @@ def calc_tmpTheta0():
 def calc_tmpTheta1():
 	summation = 0
 	for i in range(m):
-		summation += (calc_estimate_price(file_milage[i] / scaling) - file_price[i]) * (file_milage[i] / 1000)
+		summation += (calc_estimate_price(file_milage[i] / scaling) - file_price[i]) * (file_milage[i] / scaling)
 	return learningRate1 * (1/m) * summation
 
 
