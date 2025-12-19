@@ -11,7 +11,7 @@ def get_theta():
 		theta0 = params_obj["theta0"]
 		theta1 = params_obj["theta1"]
 	except Exception as e:
-		print("Error: unable to open file (prediction will continue but theta will be 0)")
+		print("Error: unable to open params file (prediction will continue but theta will be 0)")
 
 def estimate_price(milage):
 	return theta0 + theta1 * milage

@@ -1,5 +1,3 @@
-DATAFILE = data.csv
-
 train:
 	@python3 train.py
 

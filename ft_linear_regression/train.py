@@ -15,7 +15,6 @@ file_price = []
 m = 0 # m is the total number of entries in the dataset cuz we wanna know the average, which is sum / total entries
 theta0 = 0
 theta1 = 0
-r_squared_arr = []
 mse_arr = []
 
 def calc_estimate_price(milage):
@@ -65,7 +64,7 @@ def train_model():
 		tmpTheta1 = calc_tmpTheta1()
 
 		if math.isnan(tmpTheta0) or math.isnan(tmpTheta1):
-			print("NaN detected! Stopping calculation...")
+			print("Nan detected, smth happened somewhere lmao")
 			break
 
 		if abs(tmpTheta0) < error and abs(tmpTheta1) < error:
@@ -74,7 +73,6 @@ def train_model():
 		theta0 -= tmpTheta0
 		theta1 -= tmpTheta1
 
-		calculate_r_squared()
 		calculate_mse()
 
 	theta1 /= scaling
@@ -83,8 +81,7 @@ def write_theta():
 	params = {
 		"theta0": theta0,
 		"theta1": theta1,
-		"mse": mse_arr[-1],
-		"R2 error": r_squared_arr[-1]
+		"mse": mse_arr[-1]
 	}
 
 	try:
@@ -115,14 +112,6 @@ def plot_milage_vs_price():
 	plot.legend()
 	plot.show()
 
-def plot_rs_squared():
-	plot.plot(range(len(r_squared_arr)), r_squared_arr, label='R2 Linear Regression Error')
-	plot.xlabel('Iteration')
-	plot.ylabel('R2 error')
-	plot.title('R2 Linear Regression Error')
-	plot.legend()
-	plot.show()
-
 def plot_mse():
 	plot.plot(range(len(mse_arr)), mse_arr, label='MSE Linear Regression')
 	plot.xlabel('Iteration')
@@ -130,21 +119,6 @@ def plot_mse():
 	plot.title('MSE')
 	plot.legend()
 	plot.show()
-
-def calculate_r_squared():
-    mean_price = sum(file_price) / m
-
-    ss_tot = 0
-    for price in file_price:
-        ss_tot += (price - mean_price) ** 2
-
-    ss_res = 0
-    for i in range(m):
-        predicted = theta0 + (theta1 * (file_milage[i] / scaling))
-        ss_res += (file_price[i] - predicted) ** 2
-    
-    r_squared = 1 - (ss_res / ss_tot)
-    r_squared_arr.append(r_squared)
 
 def calculate_mse():
 	global mse_arr
@@ -163,5 +137,4 @@ if __name__ == "__main__":
 	train_model()
 	write_theta()
 	plot_milage_vs_price()
-	plot_rs_squared()
 	plot_mse()
