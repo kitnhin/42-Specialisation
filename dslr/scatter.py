@@ -46,27 +46,53 @@ def calc_and_display_scatter():
 				max_corr_idx2 = field2_idx
 	
 	#plot best correlation
-	best_field1_name = field_names[max_corr_idx1]
-	best_field2_name = field_names[max_corr_idx2]
-	best_field1_nums, best_field2_nums = convert_str_to_float_2arrays(field_values[max_corr_idx1], field_values[max_corr_idx2])
-	plot.scatter(best_field1_nums, best_field2_nums)
-	plot.title("Best correlation scatterplot")
-	plot.xlabel(best_field1_name)
-	plot.ylabel(best_field2_name)
-	plot.show()
-	print("field idxs:", max_corr_idx1, max_corr_idx2)
+	plot_scatter_by_house(field_names[max_corr_idx1], field_names[max_corr_idx2], field_values[max_corr_idx1], field_values[max_corr_idx2], "Best correlation scatterplot")
 
 	#for demo, plot random two fields (shows weak correlation)
 	demo_idx1, demo_idx2 = 8, 11
-	demo_field1_name = field_names[demo_idx1]
-	demo_field2_name = field_names[demo_idx2]
-	demo_field1_nums, demo_field2_nums = convert_str_to_float_2arrays(field_values[demo_idx1], field_values[demo_idx2])
-	plot.scatter(demo_field1_nums, demo_field2_nums)
-	plot.title("Demo correlation scatterplot")
-	plot.xlabel(demo_field1_name)
-	plot.ylabel(demo_field2_name)
-	plot.show()
+	plot_scatter_by_house(field_names[demo_idx1], field_names[demo_idx2], field_values[demo_idx1], field_values[demo_idx2], "Demo correlation scatterplot")
 
+def plot_scatter_by_house(field1_name, field2_name, field1_values, field2_values, title):
+	#Find house index
+	house_index = -1
+	for i in range(len(field_names)):
+		if field_names[i].lower() == "hogwarts house":
+			house_index = i
+			break
+
+	# Extract scores
+	house_names = ["Gryffindor", "Slytherin", "Ravenclaw", "Hufflepuff"]
+	colors = ['red', 'green', 'orange', 'purple']
+
+	#create 4 arrays, one for each house, then split the field1 and field2 values by each house
+	house_field1 = []
+	house_field2 = []
+	for h in range(4):
+		house_field1.append([])
+		house_field2.append([])
+
+	# Extract data for each house
+	for i in range(len(field1_values)):
+		if field1_values[i].strip() == "" or field2_values[i].strip() == "":
+			continue
+
+		house = field_values[house_index][i].strip()
+
+		for h in range(4):
+			if house == house_names[h]:
+				house_field1[h].append(float(field1_values[i].strip()))
+				house_field2[h].append(float(field2_values[i].strip()))
+				break
+
+	# Plot for each house
+	for h in range(4):
+		plot.scatter(house_field1[h], house_field2[h], color=colors[h], label=house_names[h])
+
+	plot.xlabel(field1_name)
+	plot.ylabel(field2_name)
+	plot.title(title)
+	plot.legend()
+	plot.show()
 
 
 def calc_correlation(field1, field2):
