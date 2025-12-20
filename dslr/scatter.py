@@ -24,10 +24,7 @@ def convert_str_to_float_2arrays(field1, field2):
 def calc_and_display_scatter():
 
 	#find the numberic fields
-	numeric_fields_index = []
-	for i in range(1, len(field_values)):
-		if(nu.check_array_is_numeric(field_values[i]) == True):
-			numeric_fields_index.append(i)
+	numeric_fields_index = nu.find_numeric_fields_idx(field_values)
 	
 	#calc correlations
 	max_corr = 0
@@ -62,7 +59,7 @@ def plot_scatter_by_house(field1_name, field2_name, field1_values, field2_values
 
 	# Extract scores
 	house_names = ["Gryffindor", "Slytherin", "Ravenclaw", "Hufflepuff"]
-	colors = ['red', 'green', 'orange', 'purple']
+	colors = ['red', 'green', 'blue', 'yellow']
 
 	#create 4 arrays, one for each house, then split the field1 and field2 values by each house
 	house_field1 = []

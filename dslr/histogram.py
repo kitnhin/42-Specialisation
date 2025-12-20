@@ -14,10 +14,7 @@ field_names = []
 def calc_and_display_histogram():
 
 	#find the numberic fields
-	numeric_fields_index = []
-	for i in range(1, len(field_values)):
-		if(nu.check_array_is_numeric(field_values[i]) == True):
-			numeric_fields_index.append(i)
+	numeric_fields_index = nu.find_numeric_fields_idx(field_values)
 	
 	#init the subplot
 	num_of_columns = 5

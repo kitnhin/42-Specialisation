@@ -9,4 +9,7 @@ hist:
 scatter:
 	@python3 scatter.py ${DESC_DATASET}
 
+pair:
+	@python3 pair_plot.py ${DESC_DATASET}
+
 all: describe
