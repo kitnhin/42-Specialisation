@@ -6,4 +6,7 @@ describe:
 hist:
 	@python3 histogram.py ${DESC_DATASET}
 
+scatter:
+	@python3 scatter.py ${DESC_DATASET}
+
 all: describe

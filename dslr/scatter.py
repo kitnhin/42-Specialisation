@@ -2,123 +2,97 @@ import sys
 import math
 import numpy as np
 import matplotlib.pyplot as plot
+import utils.data_loader as dl
+import utils.maths_fts as mf
+import utils.numeric_utils as nu
 
 #variables
 file_contents = ""
 field_values = []
 field_names = []
 
-def is_numeric(str):
-	try:
-		float(str.strip())
-		return True
-	except:
-		return False
-	
-def check_array_is_numeric(arr):
-	found_value = False
-	for i in range(len(arr)):
+def convert_str_to_float_2arrays(field1, field2):
+	#convert str to float
+	field1_nums = []
+	field2_nums = []
+	for i in range(len(field1)):
+		if field1[i].strip() != "" and field2[i].strip() != "":  #only extract the values where both fields contain smth
+			field1_nums.append(float(field1[i]))
+			field2_nums.append(float(field2[i]))
+	return field1_nums, field2_nums
 
-		if arr[i].strip() == "":
-			continue
-
-		found_value = True
-
-		if is_numeric(arr[i]) == False:
-			# print(arr[i], "is not numeric")
-			return False
-	
-	return found_value # if all are empty strings then auto will return false
-
-def extract_fields():
-	global field_values, number_of_fields, field_names
-
-	#extract field names
-	lines = file_contents.split('\n')
-	field_names = lines[0].split(",")
-	number_of_fields = len(field_names)
-
-	#init fields
-	for i in range(number_of_fields):
-		field_values.append([])
-
-	# extract the rest of the fields
-	for i in range(1, len(lines)):
-		line_parts = lines[i].split(",")
-		if len(line_parts) == number_of_fields:
-			for j in range(number_of_fields):
-				field_values[j].append(line_parts[j])
-
-def readfile(filename):
-	global file_contents
-	file = open(filename)
-	file_contents = file.read()
-	file.close()
-
-def calc_and_display_histogram():
+def calc_and_display_scatter():
 
 	#find the numberic fields
 	numeric_fields_index = []
 	for i in range(1, len(field_values)):
-		if(check_array_is_numeric(field_values[i]) == True):
+		if(nu.check_array_is_numeric(field_values[i]) == True):
 			numeric_fields_index.append(i)
 	
+	#calc correlations
+	max_corr = 0
+	max_corr_idx1 = -1
+	max_corr_idx2 = -1
+	for i in range(len(numeric_fields_index)):
+		for j in range(i + 1, len(numeric_fields_index)):
+			field1_idx = numeric_fields_index[i]
+			field2_idx = numeric_fields_index[j]
+			corr = calc_correlation(field_values[field1_idx], field_values[field2_idx])
+
+			#compare absolute correlations
+			if abs(corr) > max_corr:
+				max_corr = abs(corr)
+				max_corr_idx1 = field1_idx
+				max_corr_idx2 = field2_idx
 	
+	#plot best correlation
+	best_field1_name = field_names[max_corr_idx1]
+	best_field2_name = field_names[max_corr_idx2]
+	best_field1_nums, best_field2_nums = convert_str_to_float_2arrays(field_values[max_corr_idx1], field_values[max_corr_idx2])
+	plot.scatter(best_field1_nums, best_field2_nums)
+	plot.title("Best correlation scatterplot")
+	plot.xlabel(best_field1_name)
+	plot.ylabel(best_field2_name)
+	plot.show()
+	print("field idxs:", max_corr_idx1, max_corr_idx2)
+
+	#for demo, plot random two fields (shows weak correlation)
+	demo_idx1, demo_idx2 = 8, 11
+	demo_field1_name = field_names[demo_idx1]
+	demo_field2_name = field_names[demo_idx2]
+	demo_field1_nums, demo_field2_nums = convert_str_to_float_2arrays(field_values[demo_idx1], field_values[demo_idx2])
+	plot.scatter(demo_field1_nums, demo_field2_nums)
+	plot.title("Demo correlation scatterplot")
+	plot.xlabel(demo_field1_name)
+	plot.ylabel(demo_field2_name)
+	plot.show()
+
 
 
 def calc_correlation(field1, field2):
+	#convert str to float
+	field1_nums, field2_nums = convert_str_to_float_2arrays(field1, field2)
+	
 	#convert the fields to number arr
-	field1_nums = []
-	field2_nums = []
-	for i in range(len(field1)):
-		if field1.strip() != "":
-			field1_nums.append(float(field1[i].strip()))
-		if field2.strip() != "":
-			field2_nums.append(float(field2[i].strip()))
+	field1_mean = mf.calc_mean(field1_nums)
+	field2_mean = mf.calc_mean(field2_nums)
+
+	#calc numerator
+	numerator = 0
+	for i in range(len(field1_nums)):
+		numerator += (field1_nums[i] - field1_mean) * (field2_nums[i] - field2_mean)
 	
+	#calc denominator
+	sum_partA = 0
+	sum_partB = 0
+	for i in range(len(field1_nums)):
+			sum_partA += (field1_nums[i] - field1_mean)**2
+			sum_partB += (field2_nums[i] - field2_mean)**2
+	denominator = math.sqrt(sum_partA * sum_partB)
 
-#calc functions
-def calc_min(values):
-	min_value = 2**63
-
-	for i in range(len(values)):
-		if values[i].strip() == "":
-			continue
-		min_value = min(min_value, float(values[i]))
-	
-	return min_value
-
-def calc_max(values):
-	max_value = -2**63
-
-	for i in range(len(values)):
-		if values[i].strip() == "":
-			continue
-		max_value = max(max_value, float(values[i]))
-	
-	return max_value
-
-def calc_count(values):
-	count = 0
-	for i in range(len(values)):
-		count += 1
-	return count
-
-def calc_mean(values):
-	sum = 0
-	for i in range(len(values)):
-		sum += values[i]
-	mean = sum / calc_count(values)
-	return mean
-
-def calc_std(values):
-	mean = calc_mean(values)
-	std = 0
-	for i in range(len(values)):
-		std += (values[i] - mean) ** 2
-	
-	std = math.sqrt(std / calc_count(values))
-	return std
+	#combine
+	correlation = numerator / denominator
+	return correlation
 
 
 if __name__ == "__main__":
@@ -126,9 +100,48 @@ if __name__ == "__main__":
 		if len(sys.argv) != 2:
 			raise Exception("Invalid number of arguments")
 		
-		readfile(sys.argv[1])
-		extract_fields()
-		calc_and_display_histogram()
+		file_contents = dl.readfile(sys.argv[1])
+		field_names, field_values = dl.extract_fields(file_contents)
+		calc_and_display_scatter()
 
 	except Exception as e:
 		print("Error: ", e)
+
+
+
+
+#######################################################################################
+# Explanation:
+# "Similar features" means finding two features that have a strong correlation.
+
+# correlation measures how two variables move together: (values between -1 to 1)
+# positive correlation: When one feature increases, the other also tends to increase 
+# negative correlation: When one feature increases, the other tends to decrease
+# no correlation: The features are independent (no predictable pattern)
+
+# values: 
+# 1 = most positive correlation
+# 0 = no correlation
+# -1 = most negative correlation
+
+# Example: 
+# High positive correlation - Students who score high in field1 very likely scores high in field2
+
+# Equation used:
+
+#        Σ[(field1[i] - mean_field1)(field2[i] - mean_field2)]
+# r = ------------------------------------------------------
+#     √[Σ(field1[i] - mean_field1)²] × √[Σ(field2[i] - mean_field2)²]
+
+# For each data point:
+# (field1[i] - mean_field1) = how far X is from its mean
+# same for field2
+# 
+# If student score above average in both fields -> both deviations positive -> product positive
+# If students score below average in both fields -> both deviations negative -> product positive
+# If student score one field is above average and other below average -> one positive, one negative -> product negative
+# Sum all products: large positive = positive correlation, large negative = negative correlation
+# But if sum of all products is small, this shows that the products, [(field1[i] - mean_field1)(field2[i] - mean_field2)], cancel out, meaning there's no consistent pattern
+
+#denominator used to normalise results to -1 to 1 range
+########################################################################################
