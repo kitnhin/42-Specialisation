@@ -12,4 +12,7 @@ scatter:
 pair:
 	@python3 pair_plot.py ${DESC_DATASET}
 
+train:
+	@python3 logreg_train.py ${DESC_DATASET}
+
 all: describe

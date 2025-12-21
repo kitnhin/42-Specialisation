@@ -46,11 +46,7 @@ def plot_pair_plot():
 def plot_histogram_in_subplot(field, axes):
 
 	#find house index
-	house_index = -1
-	for i in range(len(field_names)):
-		if field_names[i].lower() == "hogwarts house":
-			house_index = i
-			break
+	house_index = field_names.index("Hogwarts House")
 
 	# Extract scores
 	house_names = ["Gryffindor", "Slytherin", "Ravenclaw", "Hufflepuff"]
