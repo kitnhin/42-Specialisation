@@ -17,7 +17,7 @@ def calc_values_and_print():
 	pad_number = 10
 
 	#print header
-	headings = ["field", "count", "mean", "std", "min", "25%", "50%", "75%", "max"]
+	headings = ["field", "count", "mean", "std", "min", "25%", "50%", "75%", "max", "range"]
 	for i in range(len(headings)):
 		if i == 0:
 			print(f"|{headings[i]:^{print_field_size}}|", end = "") # template string (:^ means centre alignment padding, so :^10 means fit element in a 10 space area wif center alighnment)
@@ -43,6 +43,7 @@ def calc_values_and_print():
 			stats_calculated.append(mf.calc_percentile(field_values[i], 50))
 			stats_calculated.append(mf.calc_percentile(field_values[i], 75))
 			stats_calculated.append(mf.calc_max(field_values[i]))
+			stats_calculated.append(mf.calc_range(field_values[i]))
 
 			for i in range(len(stats_calculated)):
 				print(f"|{truncate_number(stats_calculated[i], pad_number):^{pad_number}}|", end="")

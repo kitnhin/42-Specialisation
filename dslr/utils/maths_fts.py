@@ -76,3 +76,7 @@ def calc_percentile(values, percentile):
 	nth_percentile_value = sorted_numbers[lower_index] + fraction * (sorted_numbers[upper_index] - sorted_numbers[lower_index])
 		
 	return nth_percentile_value
+
+#bonus field
+def calc_range(values):
+	return calc_max(values) - calc_min(values)
