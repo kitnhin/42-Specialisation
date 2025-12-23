@@ -71,17 +71,17 @@ def plot_histogram(field, fieldname, axes):
 	axes.set_ylabel("Frequency")
 	axes.set_title(fieldname)
 
-	# calculate the std diff so we know which course have the closest score
-	house_stds = []
+	# calculate mean to see which course has houses with similar scores
+	house_means = []
 	for h in range(4):
-		std = mf.calc_std(house_scores[h])
-		house_stds.append(std)
+		mean = mf.calc_mean(house_scores[h])
+		house_means.append(mean)
 
-	average_std = sum(house_stds) / 4
+	average_mean = sum(house_means) / 4
 
 	total_difference = 0
-	for std in house_stds:
-		difference = abs(std - average_std)
+	for mean in house_means:
+		difference = abs(mean - average_mean)
 		total_difference += difference
 
 	score = total_difference / 4
