@@ -45,6 +45,8 @@ if __name__ == "__main__":
 		#write
 		write_data(lines[:train_lines], train_file)
 		write_data(lines[train_lines:], predict_file)
+		print(f"Training data saved: {train_file}")
+		print(f"Prediction data saved: {predict_file}")
 		
 
 	except Exception as e:

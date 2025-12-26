@@ -9,15 +9,27 @@ def readfile(filename):
 	file.close()
 	return file_contents
 
-def parse_args():
+def train_parse_args():
 
 	#python argument parser very nice(type defaults to string)
 	parser = argparse.ArgumentParser()
 	parser.add_argument('--trainFile', default="datasets/dataset_train.csv")
+	parser.add_argument('--validationFile', default="datasets/dataset_predict.csv")
 	parser.add_argument('--outputFile', default="params.json")
 	parser.add_argument('--layer', type=int, nargs='*', default=[24, 24, 24])
 	parser.add_argument('--epochs', type=int, default=100)
 	parser.add_argument('--learningRate', type=float, default=0.1)
+	parser.add_argument('--batchSize', type=int, default=30)
+
+	return parser.parse_args()
+
+def predict_parse_args():
+
+	#python argument parser very nice(type defaults to string)
+	parser = argparse.ArgumentParser()
+	parser.add_argument('--predictFile', default="datasets/dataset_predict.csv")
+	parser.add_argument('--paramsFile', default="params.json")
+	parser.add_argument('--outputFile', default="predictions_output.txt")
 
 	return parser.parse_args()
 
@@ -30,7 +42,7 @@ def write_params(params, filename):
 	except Exception:
 		print("Failed to write data")
 
-def process_train_contents(contents):
+def extract_data(contents):
 	lines = contents.strip().split("\n")
 	actual_results = []
 	data = [] #[x][y] = line x feature y in the given data
@@ -63,3 +75,11 @@ def normalise_data(data):
 			data[i][j] = (data[i][j] - means[j]) / stds[j]
 	
 	return means, stds
+
+
+def normalise_validation_data(validation_data, training_means, training_stds):
+	
+	#normalise each score
+	for i in range(len(validation_data)):
+		for j in range(len(validation_data[0])):
+			validation_data[i][j] = (validation_data[i][j] - training_means[j]) / training_stds[j]
