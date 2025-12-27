@@ -3,3 +3,4 @@ __pycache__
 *.pyc
 params.json
 houses.csv
+datasets

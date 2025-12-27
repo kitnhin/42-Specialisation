@@ -31,7 +31,7 @@ predict:
 	@python3 predict.py --paramsFile ${PARAMS_OUTPUT} --predictFile ${PREDICT_DATASET} --outputFile ${PREDICT_OUTPUT}
 
 clean:
-	rm datasets/dataset_train.csv datasets/dataset_predict.csv params.json
+	rm datasets/dataset_train.csv datasets/dataset_predict.csv params.json predictions_output.txt
 
 all: sep train predict
 
