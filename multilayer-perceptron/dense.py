@@ -12,7 +12,14 @@ class Dense(Layer):
 			self.weights = np.random.uniform(-limit, limit, size=(output_size, input_size))
 		else:
 			self.weights = np.random.randn(output_size, input_size) #in case randn give too big, might change ltr (row = outputsize, col = inputsize)
+
 		self.bias = np.zeros((output_size, 1))
+
+		# gradient accumulation for batch 
+		self.weights_gradient_sum = np.zeros_like(self.weights) #zeros like gives an array wif the same size as the one given but all 0s inside
+		self.bias_gradient_sum = np.zeros_like(self.bias)
+		self.batch_size = 0
+
 	
 	def forward(self, input):
 		self.input = input
@@ -24,11 +31,21 @@ class Dense(Layer):
 		bias_gradient = output_gradient
 		input_gradient = np.dot(self.weights.transpose(), output_gradient)
 
-		#update variables using gradient descend
-		self.weights -= learning_rate * weights_gradient
-		self.bias -= learning_rate * bias_gradient
+		#calc gradient sum for batch
+		self.weights_gradient_sum += weights_gradient
+		self.bias_gradient_sum += bias_gradient
+		self.batch_size += 1
 
 		return input_gradient #return error gradient of previous layer
+	
+	def update_weights(self, learning_rate):
+		self.weights -= learning_rate * (self.weights_gradient_sum / self.batch_size)
+		self.bias -= learning_rate * (self.bias_gradient_sum / self.batch_size)
+
+		#reset sum arrays
+		self.weights_gradient_sum = np.zeros_like(self.weights)
+		self.bias_gradient_sum = np.zeros_like(self.bias)
+		self.batch_size = 0
 
 	
 #variables inside each dense layer

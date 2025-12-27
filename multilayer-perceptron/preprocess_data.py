@@ -22,7 +22,7 @@ def train_parse_args():
 	parser.add_argument('--batchSize', type=int, default=30)
 	parser.add_argument('--activationFt', default="sigmoid")
 	parser.add_argument('--weightsInitialiser', default="heUniform")
-	parser.add_argument('--seed', type=int, default=None)
+	parser.add_argument('--seed', type=int, default=-1)
 
 	return parser.parse_args()
 

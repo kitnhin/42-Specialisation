@@ -84,7 +84,7 @@ def binary_crossentropy_error(y_pred, y_true):
 	return loss
 
 
-def train(network, train_data, train_results, validation_data, validation_results, epochs, learning_rate):
+def train(network, train_data, train_results, validation_data, validation_results, epochs, learning_rate, batch_size):
 
 	#track loss / error after each epoch to plot later
 	loss_arr = [] 
@@ -114,6 +114,12 @@ def train(network, train_data, train_results, validation_data, validation_result
 
 			for layer in reversed(network):
 				gradient = layer.backward(gradient, learning_rate)
+			
+			#update gradient if reach batch size
+			if (i + 1) % batch_size == 0 or (i + 1) == len(train_data):
+				for layer in network:
+					if isinstance(layer, Dense):
+						layer.update_weights(learning_rate)
 
 		#calc acc
 		train_acc = calc_accuracy(network, train_data, train_results)
@@ -191,6 +197,7 @@ if __name__ == "__main__":
 		learning_rate = args.learningRate
 		validation_file = args.validationFile
 		activation_ft = args.activationFt
+		batch_size = args.batchSize
 		weights_init = args.weightsInitialiser
 		seed = args.seed
 
@@ -208,7 +215,7 @@ if __name__ == "__main__":
 
 		#training
 		network = construct_network(data, layers, activation_ft, weights_init, seed)
-		loss_arr, val_loss_arr, train_acc_arr, val_acc_arr = train(network, data, actual_results, validation_data, validation_actual_results, epochs, learning_rate)
+		loss_arr, val_loss_arr, train_acc_arr, val_acc_arr = train(network, data, actual_results, validation_data, validation_actual_results, epochs, learning_rate, batch_size)
 		plot_loss(loss_arr, val_loss_arr)
 		plot_acc(train_acc_arr, val_acc_arr)
 
