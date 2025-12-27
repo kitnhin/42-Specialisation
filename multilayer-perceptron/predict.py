@@ -13,7 +13,7 @@ def reconstruct_network(weights, biases, activation):
 
 	#all layers
 	for i in range(len(weights)):
-		dense_layer = Dense(weights[i].shape[1], weights[i].shape[0]) #shape[1] = col = number of inputs = input size
+		dense_layer = Dense(weights[i].shape[1], weights[i].shape[0], "", 1) #shape[1] = col = number of inputs = input size
 		dense_layer.weights = weights[i]
 		dense_layer.bias = biases[i]
 		network.append(dense_layer)
@@ -87,8 +87,8 @@ def write_predictions(predicts, actual, filename):
 	try:
 		with open(filename, "w") as f:
 			#write header
-			f.write("| actual | predict | results |\n")
-			f.write("|--------|---------|---------|\n")
+			f.write("| actual | predict | results  |\n")
+			f.write("|--------|---------|----------|\n")
 			
 			#write predictions
 			for i in range(len(predicts)):
@@ -123,9 +123,9 @@ if __name__ == "__main__":
 		accuracy = calc_accuracy(predicts, actual_results)
 		
 		#output
-		print("\nPrediction stats: ")
-		print("Average error: ", avg_error)
-		print("Final accuracy: ", accuracy)
+		print("Prediction stats: ")
+		print(f"Average error: {avg_error:.4f}")
+		print(f"Final accuracy: {accuracy:.4f}")
 		write_predictions(predicts, actual_results, output_file)
 
 

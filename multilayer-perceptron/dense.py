@@ -2,8 +2,16 @@ import numpy as np
 from layer import Layer
 
 class Dense(Layer):
-	def __init__(self, input_size, output_size):
-		self.weights = np.random.randn(output_size, input_size) #in case randn give too big, might change ltr (row = outputsize, col = inputsize)
+	def __init__(self, input_size, output_size, initialiser, seed=None):
+
+		if seed != -1:
+			np.random.seed(seed)
+		
+		if initialiser == "heUniform":
+			limit = np.sqrt(6 / input_size)
+			self.weights = np.random.uniform(-limit, limit, size=(output_size, input_size))
+		else:
+			self.weights = np.random.randn(output_size, input_size) #in case randn give too big, might change ltr (row = outputsize, col = inputsize)
 		self.bias = np.zeros((output_size, 1))
 	
 	def forward(self, input):

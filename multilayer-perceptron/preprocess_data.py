@@ -20,6 +20,9 @@ def train_parse_args():
 	parser.add_argument('--epochs', type=int, default=100)
 	parser.add_argument('--learningRate', type=float, default=0.1)
 	parser.add_argument('--batchSize', type=int, default=30)
+	parser.add_argument('--activationFt', default="sigmoid")
+	parser.add_argument('--weightsInitialiser', default="heUniform")
+	parser.add_argument('--seed', type=int, default=None)
 
 	return parser.parse_args()
 
@@ -30,6 +33,7 @@ def predict_parse_args():
 	parser.add_argument('--predictFile', default="datasets/dataset_predict.csv")
 	parser.add_argument('--paramsFile', default="params.json")
 	parser.add_argument('--outputFile', default="predictions_output.txt")
+	parser.add_argument('--activationFt', default="sigmoid")
 
 	return parser.parse_args()
 

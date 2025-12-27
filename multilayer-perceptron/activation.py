@@ -4,7 +4,7 @@ from layer import Layer
 import activation_ft as af
 
 class Activation(Layer):
-	def __init__(self, activation_ft):
+	def __init__(self, activation_ft="sigmoid"):
 		super().__init__()
 		self.activation_ft = activation_ft
 	
@@ -16,6 +16,9 @@ class Activation(Layer):
 			self.output = af.sigmoid(input)
 		elif self.activation_ft == "softmax":
 			self.output = af.softmax(input)
+		elif self.activation_ft == "relu":
+			self.output = af.relu(input)
+			
 		
 		return self.output
 	
@@ -25,6 +28,8 @@ class Activation(Layer):
 			input_error = np.multiply(output_gradient, af.sigmoid_prime(self.input))
 		elif self.activation_ft == "softmax":
 			input_error = output_gradient
+		elif self.activation_ft == "relu":
+			input_error = np.multiply(output_gradient, af.relu_prime(self.input))
 		
 		return input_error
 	

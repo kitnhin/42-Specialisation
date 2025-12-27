@@ -8,7 +8,7 @@ import matplotlib.pyplot as plot
 from dense import Dense
 from activation import Activation
 
-def construct_network(data, layers):
+def construct_network(data, layers, activation_ft, weights_init, seed):
 	#construct network
 	network = []
 
@@ -16,8 +16,8 @@ def construct_network(data, layers):
 	#first layer
 	input_size = len(data[0]) #number of fields
 	output_size = layers[0]
-	network.append(Dense(input_size, output_size)) #first input layer
-	network.append(Activation("sigmoid"))
+	network.append(Dense(input_size, output_size, weights_init, seed)) #first input layer
+	network.append(Activation(activation_ft))
 	prev_out_size = output_size
 	print (f"input layer (neurons: {output_size}) -> ", end="")
 
@@ -25,15 +25,15 @@ def construct_network(data, layers):
 	for i in range(len(layers)):
 		input_size = prev_out_size
 		output_size = layers[i]
-		network.append(Dense(input_size, output_size))
-		network.append(Activation("sigmoid"))
+		network.append(Dense(input_size, output_size, weights_init, seed))
+		network.append(Activation(activation_ft))
 		prev_out_size = output_size
 		print (f"hidden layer {i + 1} (neurons: {output_size}) -> ", end="")
 	
 	#actual processing
 	input_size = prev_out_size
 	output_size = 2 #follow picture in pdf, they used 2 neurons in last layer
-	network.append(Dense(input_size, output_size))
+	network.append(Dense(input_size, output_size, weights_init, seed))
 	network.append(Activation("softmax"))
 	print (f"output layer (neurons: {output_size})\n")
 	print("=================================================================================\n")
@@ -190,6 +190,9 @@ if __name__ == "__main__":
 		epochs = args.epochs
 		learning_rate = args.learningRate
 		validation_file = args.validationFile
+		activation_ft = args.activationFt
+		weights_init = args.weightsInitialiser
+		seed = args.seed
 
 		#extract and process training data
 		given_file_contents = pd.readfile(train_file)
@@ -204,7 +207,7 @@ if __name__ == "__main__":
 		pd.normalise_validation_data(validation_data, training_means, training_stds) #use training means and stds to ensure acc since our training normalising uses these
 
 		#training
-		network = construct_network(data, layers)
+		network = construct_network(data, layers, activation_ft, weights_init, seed)
 		loss_arr, val_loss_arr, train_acc_arr, val_acc_arr = train(network, data, actual_results, validation_data, validation_actual_results, epochs, learning_rate)
 		plot_loss(loss_arr, val_loss_arr)
 		plot_acc(train_acc_arr, val_acc_arr)
