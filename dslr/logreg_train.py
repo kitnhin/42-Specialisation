@@ -130,6 +130,7 @@ def calc_gradient(house_name, batch_size):
 
 		for j in range(1, num_weights):
 			gradients[j] += (h - y)*student_scores[i][j - 1] #student score need j - 1 cuz the first score (astronomy), is for the second weight
+			#above gradient equation is already given in pdf
 		
 		batch_count += 1
 
