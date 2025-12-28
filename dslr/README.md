@@ -3,10 +3,10 @@ A machine learning project that trains a logistic regression model to sort stude
 
 ## Data Analysis
 
-### Describe Statistics
+### Describe
 Calculate and display key statistics for each course:
-- **Mean (μ)**: Average score
-- **Standard Deviation (σ)**: Measures spread of data around the mean
+- **Mean**: Average score
+- **Standard Deviation**: Measures spread of data around the mean
 - **Percentiles**: Shows what percentage of data points are below a value.
 
 ### Histogram
