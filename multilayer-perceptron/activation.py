@@ -25,7 +25,7 @@ class Activation(Layer):
 	def backward(self, output_gradient, learning_rate):
 		input_error = 1
 		if self.activation_ft == "sigmoid":
-			input_error = np.multiply(output_gradient, af.sigmoid_prime(self.input))
+			input_error = np.multiply(output_gradient, af.sigmoid_prime(self.input)) # element wise multiplication
 		elif self.activation_ft == "softmax":
 			input_error = output_gradient
 		elif self.activation_ft == "relu":

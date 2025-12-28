@@ -4,3 +4,4 @@ __pycache__
 params.json
 houses.csv
 datasets
+predictions_output.txt
