@@ -2,6 +2,8 @@ import sys
 import math
 import utils.data_loader as dl
 import utils.maths_fts as mf
+import argparse
+import matplotlib.pyplot as plt
 
 import json
 
@@ -9,6 +11,8 @@ import json
 file_contents = ""
 field_values = []
 field_names = []
+costs = {}
+learning_rate = 0
 
 #student variables
 student_houses = []
@@ -77,6 +81,17 @@ def normalise_student_score():
 
 	return means, stds
 
+def init_batchsize_and_learning_rate(gradient_descend):
+	match gradient_descend:
+		case "batch" :
+			return len(student_scores), 0.1
+		case "sgd":
+			return 1, 0.0001
+		case "minibatch":
+			return 30, 0.003
+		case _: #default
+			return len(student_scores), 0.1
+
 
 #calculations
 def calc_confidence(house_name, score):
@@ -98,13 +113,14 @@ def calc_cost(house_name):
 		+ (1 - y_term) * math.log(1 - calc_confidence(house_name, student_scores[i]))
 
 	average_cost = -(1/num_of_students) * total_cost
+	costs[house_name].append(average_cost)
 	return average_cost
 
-def calc_gradient(house_name):
+def calc_gradient(house_name, batch_size):
 	num_weights = len(weights[house_name])
 	num_students = len(student_scores)
 	gradients = [0] * num_weights
-
+	batch_count = 0
 	#calculate the sum part
 	for i in range(num_students):
 		h = calc_confidence(house_name, student_scores[i])
@@ -115,32 +131,41 @@ def calc_gradient(house_name):
 		for j in range(1, num_weights):
 			gradients[j] += (h - y)*student_scores[i][j - 1] #student score need j - 1 cuz the first score (astronomy), is for the second weight
 		
-	#average out the gradients
-	for i in range(num_weights):
-		gradients[i] /= num_students
+		batch_count += 1
 
-	return gradients
+		#update weights after processing batch
+		if batch_count == batch_size or i == num_students - 1:
+
+			for k in range(num_weights):
+				gradients[k] = gradients[k] / batch_count
+			
+			update_weights(house_name, gradients)
+			
+			#reset
+			gradients = [0] * num_weights
+			batch_count = 0
 
 def update_weights(house_name, gradients):
-	learning_rate = 0.1 #maybe can change ltr
+	global learning_rate
 	for i in range(len(weights[house_name])):
 		weights[house_name][i] -= learning_rate * gradients[i]
 
 #training loops
-def train_house(house_name, iterations):
+def train_house(house_name, iterations, batch_size):
+	costs[house_name] = []
 	for iteration in range(iterations):
-		gradients = calc_gradient(house_name)
-		update_weights(house_name, gradients)
+		calc_gradient(house_name, batch_size)
+		calc_cost(house_name)
 
 	final_cost = calc_cost(house_name)
 	print(f"House training complete: {house_name} - Final cost: {final_cost}")
 
-def train():
+def train(batch_size):
 	iterations = 100 #change later if want
 	houses = ["Gryffindor", "Slytherin", "Ravenclaw", "Hufflepuff"]
 	print("Starting Training...")
 	for house in houses:
-		train_house(house, iterations)
+		train_house(house, iterations, batch_size)
 
 #output
 def save_model(weights, means, stds):
@@ -156,19 +181,42 @@ def save_model(weights, means, stds):
 		f.close()
 	except Exception:
 		print("Failed to save params")
-
+		
+def plot_training_costs():
+	plt.figure(figsize=(12, 8))
+	
+	for house in costs:
+		plt.plot(costs[house], label=house)
+	
+	plt.xlabel('Iteration')
+	plt.ylabel('Cost (Error)')
+	plt.title('Training Cost per House')
+	plt.legend()
+	plt.grid(True)
+	plt.show()
 
 if __name__ == "__main__":
 	try:
-		if len(sys.argv) != 2:
-			raise Exception("Invalid number of arguments")
 		
-		file_contents = dl.readfile(sys.argv[1])
+		#parse args
+		parser = argparse.ArgumentParser()
+		parser.add_argument("--trainDataset", default="datasets/dataset_train.csv")
+		parser.add_argument("--gradientDescend", default="batch")
+		trainfile = parser.parse_args().trainDataset
+		gradient_descend = parser.parse_args().gradientDescend
+
+		
+		#processing
+		file_contents = dl.readfile(trainfile)
 		field_names, field_values = dl.extract_fields(file_contents)
 		extract_student_data()
 		means, stds = normalise_student_score()
-		train()
+		batch_size, learning_rate = init_batchsize_and_learning_rate(gradient_descend)
+
+		#training
+		train(batch_size)
 		save_model(weights, means, stds)
+		plot_training_costs()
 
 		
 	except Exception as e:
