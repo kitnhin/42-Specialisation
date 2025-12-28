@@ -17,8 +17,8 @@ A multilayer perceptron (MLP) is a feedforward neural network consisting of mult
   - `bias`: 1D array of shape [output_size, 1]
 
 - **Activation Layer**: Applies a non-linear activation function to the output of a dense layer. These functions include:
-  - **Sigmoid**: σ(x) = 1/(1 + e<sup>-x</sup>) - outputs values between 0 and 1
-  - **ReLU**: f(x) = max(0, x) - introduces non-linearity while being computationally efficient
+  - **Sigmoid**: 1/(1 + e<sup>-x</sup>) - outputs values between 0 and 1
+  - **ReLU**: max(0, x) -  outputs the input if positive, otherwise outputs 0.
   - **Softmax**: Used in the output layer to convert raw scores into probability distributions
 
 ### Forward Propagation
@@ -45,9 +45,9 @@ output = activation_function(input)
 
 The cost function measures how far the network's predictions deviate from the actual labels. For this project, we use **binary cross-entropy loss**:
 
-``````````````
+<p align="center">
 E = -1/N Σ[y<sub>n</sub> log(p<sub>n</sub>) + (1 - y<sub>n</sub>)log(1 - p<sub>n</sub>)]
-``````````````
+</p>
 
 where:
 - **N**: number of samples
@@ -62,13 +62,13 @@ Backward propagation computes gradients of the cost function with respect to wei
 
 **Dense Layer Gradients**:
 
-``````````````
+<p align="center">
 ∂E/∂W = ∂E/∂z · x<sup>T</sup>
 
 ∂E/∂b = ∂E/∂z
 
 ∂E/∂x = W<sup>T</sup> · ∂E/∂z
-``````````````
+</p>
 
 Where: 
 
@@ -79,9 +79,9 @@ Where:
 
 **Activation Layer Gradient**:
 
-``````````````
+<p align="center">
 ∂E/∂z = ∂E/∂a ⊙ σ'(z)
-``````````````
+</p>
 
 where **⊙** denotes element-wise multiplication and **σ'** is the derivative of the activation function.
 
@@ -89,13 +89,14 @@ where **⊙** denotes element-wise multiplication and **σ'** is the derivative 
 
 For batch processing, gradients are accumulated across the batch:
 
-``````````````
+<p align="center">
 W<sub>new</sub> = W<sub>old</sub> - learning_rate × (Σ∂E/∂W) / batch_size
-
+</p>
+<p align="center">
 b<sub>new</sub> = b<sub>old</sub> - learning_rate × (Σ∂E/∂b) / batch_size
-``````````````
+</p>
 
-The learning_rate controls the step size. The gradient tells us which direction reduces the cost, so we subtract it to move towards the minimum cost.
+The gradient tells us which direction reduces the cost, so we subtract it to move towards the minimum cost, and the learning_rate controls the step size. 
 
 
 ## Process
