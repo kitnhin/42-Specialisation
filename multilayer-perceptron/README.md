@@ -6,7 +6,7 @@ This project designs and trains a neural network from scratch for binary classif
 
 ### What is a Multilayer Perceptron
 
-<center> <img src="images/mlp.png" alt="mlp picture" width="800"/> </center>
+<p align="center"> <img src="images/mlp.png" alt="mlp picture" width="800"/> </p>
 
 A multilayer perceptron (MLP) is a feedforward neural network consisting of multiple layers of neurons. Data flows from the input layer through one or more hidden layers to the output layer. The network learns by adjusting weights and biases through backpropagation and gradient descent, minimizing the difference between predicted and actual outputs.
 
@@ -23,17 +23,21 @@ A multilayer perceptron (MLP) is a feedforward neural network consisting of mult
 
 ### Forward Propagation
 
-<center> <img src="images/propogation.png" alt="propogation picture" width="600"/> </center>
+<p align="center"> <img src="images/propogation.png" alt="propogation picture" width="600"/> </p>
 
 Forward propagation passes input data through the network layer by layer to generate predictions:
 
 1. **Dense Layer Forward Pass**: Calculate the weighted sum of inputs plus bias
 
-<center>output_vector = weights_matrix · input_vector + bias_vector</center>
+``````````````
+output_vector = weights_matrix · input_vector + bias_vector
+``````````````
 
 2. **Activation Layer Forward Pass**: Apply the activation function
 
-<center>output = activation_function(input)</center>
+``````````````
+output = activation_function(input)
+``````````````
 
 3. Repeat for each layer until reaching the output, which gives the predicted probabilities for each class.
 
@@ -41,7 +45,9 @@ Forward propagation passes input data through the network layer by layer to gene
 
 The cost function measures how far the network's predictions deviate from the actual labels. For this project, we use **binary cross-entropy loss**:
 
-<center>E = -1/N Σ[y<sub>n</sub> log(p<sub>n</sub>) + (1 - y<sub>n</sub>)log(1 - p<sub>n</sub>)]</center>
+``````````````
+E = -1/N Σ[y<sub>n</sub> log(p<sub>n</sub>) + (1 - y<sub>n</sub>)log(1 - p<sub>n</sub>)]
+``````````````
 
 where:
 - **N**: number of samples
@@ -56,11 +62,13 @@ Backward propagation computes gradients of the cost function with respect to wei
 
 **Dense Layer Gradients**:
 
-<center>∂E/∂W = ∂E/∂z · x<sup>T</sup></center>
+``````````````
+∂E/∂W = ∂E/∂z · x<sup>T</sup>
 
-<center>∂E/∂b = ∂E/∂z</center>
+∂E/∂b = ∂E/∂z
 
-<center>∂E/∂x = W<sup>T</sup> · ∂E/∂z</center>
+∂E/∂x = W<sup>T</sup> · ∂E/∂z
+``````````````
 
 Where: 
 
@@ -71,7 +79,9 @@ Where:
 
 **Activation Layer Gradient**:
 
-<center>∂E/∂z = ∂E/∂a ⊙ σ'(z)</center>
+``````````````
+∂E/∂z = ∂E/∂a ⊙ σ'(z)
+``````````````
 
 where **⊙** denotes element-wise multiplication and **σ'** is the derivative of the activation function.
 
@@ -79,9 +89,11 @@ where **⊙** denotes element-wise multiplication and **σ'** is the derivative 
 
 For batch processing, gradients are accumulated across the batch:
 
-<center>W<sub>new</sub> = W<sub>old</sub> - learning_rate × (Σ∂E/∂W) / batch_size</center>
+``````````````
+W<sub>new</sub> = W<sub>old</sub> - learning_rate × (Σ∂E/∂W) / batch_size
 
-<center>b<sub>new</sub> = b<sub>old</sub> - learning_rate × (Σ∂E/∂b) / batch_size</center>
+b<sub>new</sub> = b<sub>old</sub> - learning_rate × (Σ∂E/∂b) / batch_size
+``````````````
 
 The learning_rate controls the step size. The gradient tells us which direction reduces the cost, so we subtract it to move towards the minimum cost.
 
