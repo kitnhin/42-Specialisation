@@ -156,10 +156,13 @@ Prediction process:
 - **WEIGHTS_INITIALISER**: Method for initializing weights
 
 ## Results
+
 Below shows examples of results obtained during training
 
-Loss graph
+**Loss graph**
+
 <img src="images/loss.png" alt="loss results" width="500"/>
 
-Accuracy graph
+**Accuracy graph**
+
 <img src="images/accuracy.png" alt="accuracy results" width="500"/>
