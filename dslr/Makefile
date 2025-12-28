@@ -24,7 +24,7 @@ predict:
 run: train predict acc
 
 acc:
-	@python3 accuracy.py
+	@python3 evaluate.py
 
 clean:
 	rm houses.csv params.json

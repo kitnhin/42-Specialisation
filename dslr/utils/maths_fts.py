@@ -58,7 +58,6 @@ def calc_percentile(values, percentile):
 			continue
 		numbers.append(float(values[i]))
 		
-	# return np.percentile(numbers, 50)
 	# steps:
 	# 1) sort numbers
 	# 2) find pos (number of elements - 1) * (percentile / 100) (n - 1 to take into account index starts from 0)
